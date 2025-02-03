@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claim Cash Prize</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gradient-to-r from-indigo-500 to-purple-500">
+    <div class="max-w-md p-6 bg-white shadow-2xl rounded-2xl text-center space-y-4">
+        <h1 class="text-3xl font-bold text-indigo-700">Claim Your Cash Prize 💰</h1>
+        <form id="reward-form">
+            <div>
+                <label for="payment-method" class="block text-lg text-gray-700">Select Payment Method</label>
+                <select id="payment-method" class="w-full p-2 mt-2 border rounded-lg">
+                    <option value="bkash">bKash</option>
+                    <option value="rocket">Rocket</option>
+                    <option value="nagad">Nagad</option>
+                </select>
+            </div>
+
+            <div class="mt-4">
+                <label for="account-number" class="block text-lg text-gray-700">Account Number</label>
+                <input type="text" id="account-number" class="w-full p-2 mt-2 border rounded-lg" required />
+            </div>
+
+            <div class="mt-4">
+                <button type="submit"
+                    class="px-4 py-2 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 transition-all">
+                    Claim Prize
+                </button>
+            </div>
+        </form>
+
+        <div id="timer" class="mt-4 text-lg font-semibold text-indigo-700"></div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmation-modal"
+        class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 hidden">
+        <div class="bg-white p-6 rounded-xl shadow-xl max-w-lg w-full">
+            <h2 class="text-2xl font-bold text-indigo-700 mb-4">Claim Successfully Submitted!</h2>
+            <p class="text-lg text-gray-700 mb-4">Your prize claim has been successfully submitted. You'll receive your
+                prize within 2 days.</p>
+            <p class="text-lg text-gray-700 mb-4">We will send your prize through <span id="payment-method-display"
+                    class="font-semibold"></span> to the account number <span id="account-number-display"
+                    class="font-semibold"></span>.</p>
+            <button onclick="closeModal()"
+                class="mt-4 px-6 py-3 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 transition-all">
+                Close
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Handle the form submission
+        document.getElementById('reward-form').addEventListener('submit', function (e) {
+            e.preventDefault();
+
+            const paymentMethod = document.getElementById('payment-method').value;
+            const accountNumber = document.getElementById('account-number').value;
+
+            // Save the data to localStorage
+            const rewardData = { paymentMethod, accountNumber, claimedAt: new Date() };
+            localStorage.setItem('rewardData', JSON.stringify(rewardData));
+
+            // Display confirmation modal with details
+            document.getElementById('payment-method-display').textContent = paymentMethod;
+            document.getElementById('account-number-display').textContent = accountNumber;
+            document.getElementById('confirmation-modal').classList.remove('hidden');
+
+            // Start the 2-day timer
+            const timerEnd = new Date(rewardData.claimedAt);
+            timerEnd.setDate(timerEnd.getDate() + 2);
+            setInterval(function () {
+                const remainingTime = timerEnd - new Date();
+                if (remainingTime <= 0) {
+                    document.getElementById('timer').innerHTML = 'Your prize will be delivered shortly!';
+                } else {
+                    const hours = Math.floor(remainingTime / 1000 / 60 / 60);
+                    const minutes = Math.floor((remainingTime % (1000 * 60 * 60)) / (1000 * 60));
+                    document.getElementById('timer').innerHTML = `Time remaining: ${hours}h ${minutes}m`;
+                }
+            }, 60000);
+        });
+
+        // Close the confirmation modal
+        function closeModal() {
+            document.getElementById('confirmation-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+
+</html>

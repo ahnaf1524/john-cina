@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rankings</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+
+<body class="flex items-center justify-center min-h-screen bg-gray-100">
+    <div class="container mx-auto p-6 bg-white shadow-lg rounded-lg">
+        <h1 class="text-3xl font-bold text-center text-indigo-700 mb-4">Codeforces Rankings</h1>
+        <table class="w-full border-collapse border border-gray-300">
+            <thead>
+                <tr class="bg-indigo-600 text-white">
+                    <th class="border border-gray-300 p-2">Rank</th>
+                    <th class="border border-gray-300 p-2">Name</th>
+                    <th class="border border-gray-300 p-2">Contests</th>
+                    <th class="border border-gray-300 p-2">Rating</th>
+                    <th class="border border-gray-300 p-2">Country</th>
+                    <th class="border border-gray-300 p-2">Profile</th>
+                </tr>
+            </thead>
+            <tbody id="ranking-table"></tbody>
+        </table>
+
+        <!-- Claim Cash Prize Button -->
+        <div class="text-center mt-4">
+            <a href="reward.html"
+                class="px-6 py-3 bg-green-600 text-white rounded-xl shadow-md hover:bg-green-700 transition-all">
+                Claim Cash Prize 💰
+            </a>
+        </div>
+
+        <!-- Fancy Message Modal -->
+        <div id="cash-prize-modal"
+            class="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 hidden">
+            <div class="bg-white p-6 rounded-xl shadow-xl max-w-lg w-full">
+                <h2 class="text-2xl font-bold text-indigo-700 mb-4">Congratulations! 🎉</h2>
+                <p class="text-lg text-gray-700 mb-4">You will receive your cash prize within 2 days! 🎯</p>
+                <p class="text-lg text-gray-700 mb-4">Your prize will be sent through a payment method like
+                    <strong>Western Union</strong>, or other options.</p>
+                <p class="text-sm text-gray-500">Please ensure that you’ve provided the correct payment details in the
+                    next step.</p>
+                <button onclick="closeModal()"
+                    class="mt-4 px-6 py-3 bg-indigo-600 text-white rounded-xl shadow-md hover:bg-indigo-700 transition-all">
+                    Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        async function fetchData() {
+            try {
+                const response = await fetch('https://ahnaf1524.github.io/demo/db.json');
+                const data = await response.json();
+                const tableBody = document.getElementById("ranking-table");
+
+                data.forEach(user => {
+                    let rowClass = user.name === 'ahnaf_cp' ? 'bg-yellow-200' : ''; // Highlighting user
+                    const row = `<tr class="border border-gray-300 text-center ${rowClass}">
+                                    <td class="border border-gray-300 p-2">${user.rank}</td>
+                                    <td class="border border-gray-300 p-2">${user.name}</td>
+                                    <td class="border border-gray-300 p-2">${user.contests}</td>
+                                    <td class="border border-gray-300 p-2">${user.rating}</td>
+                                    <td class="border border-gray-300 p-2">${user.country}</td>
+                                    <td class="border border-gray-300 p-2"><a href="${user.profile}" class="text-blue-500" target="_blank">View Profile</a></td>
+                                </tr>`;
+                    tableBody.innerHTML += row;
+                });
+            } catch (error) {
+                console.error('Error fetching data:', error);
+            }
+        }
+
+        fetchData();
+
+        // Show Modal when "Claim Cash Prize" button is clicked
+        const prizeButton = document.querySelector('a[href="reward.html"]');
+        prizeButton.addEventListener('click', function (event) {
+            event.preventDefault(); // Prevent page redirection to reward.html
+            document.getElementById("cash-prize-modal").classList.remove('hidden');
+        });
+
+        // Close Modal
+        function closeModal() {
+            document.getElementById("cash-prize-modal").classList.add('hidden');
+            // Redirect to the reward.html page after closing modal
+            window.location.href = "reward.html";
+        }
+    </script>
+</body>
+
+</html>
